@@ -1,0 +1,30 @@
+[
+    {
+        "currency": "ruppe", 
+        "country": "in", 
+        "cust_id": "124", 
+        "pricing": "32", 
+        "account_no": "123"
+    }, 
+    {
+        "currency": "doller", 
+        "country": "us", 
+        "cust_id": "125", 
+        "pricing": "33", 
+        "account_no": "125"
+    }, 
+    {
+        "currency": "doller", 
+        "country": "hk", 
+        "cust_id": "126", 
+        "pricing": "34", 
+        "account_no": "126"
+    }, 
+    {
+        "currency": "ruppe", 
+        "country": "in", 
+        "cust_id": "127", 
+        "pricing": "35", 
+        "account_no": "127"
+    }
+]
