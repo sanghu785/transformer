@@ -27,3 +27,4 @@ def make_json(csvFilePath, jsonFilePath):
 
 if __name__=='__main__':
 	make_json("pricing.csv","pricing.json")
+	print("done writing")
