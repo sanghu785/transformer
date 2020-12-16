@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 import mysql.connector
 import pandas as pd
 from mysql.connector.constants import ClientFlag
@@ -26,7 +27,7 @@ def create_dataset_if_not_exists():
         cursor.execute('CREATE DATABASE IF NOT EXISTS pricing_database')  # create a new 'testdb' database
         cnxn.close()  # close connection because we will be reconnecting to testdb
     except:
-        print('1 error connecting to database')
+        print '1 error connecting to database'
 
     config['database'] = 'pricing_database'  # add new database to config dict
 
@@ -63,7 +64,7 @@ def create_tables_if_not_exists():
                        )
         cnxn.close()
     except:
-        print('2 error while creating tables')
+        print '2 error while creating tables'
 
 
 def process_csv():
@@ -83,8 +84,49 @@ def process_csv():
         val = (row.Name, row.Country, row.Age)
         cursor.execute(sql, val)
     cnxn.commit()
-    print('rows appended to table successfully')
+    print 'rows appended to table successfully'
     cnxn.close()
+
+
+def process_json():
+    cnxn = mysql.connector.connect(**config)
+    cursor = cnxn.cursor()
+    with open('data.json') as json_file:
+        data = json.load(json_file)
+    actaul_data = data['data_1']
+    for i in actual_data:
+        sql = \
+            'INSERT INTO pricing_database.customer (cust_id,glob_cust_id,cust_name) VALUES (%s, %s,%s)'
+        val = (actual_data['id'], actual_data['globCustId'],
+               actual_data[''])
+        cursor.execute(sql, val)
+
+        sql = \
+            'INSERT INTO pricing_database.account (acct_id,acct_num,cust_id) VALUES (%s, %s,%s)'
+        val = (actual_data['id'], actual_data['acctNumber'],
+               actual_data['globCustId'])
+        cursor.execute(sql, val)
+
+        sql = \
+            'INSERT INTO pricing_database.product_pricing (prdt_id,prdt_cd,prdt_desc,prdt_group,prdt_ctgry,pricing_ccy,pricing_typ,price) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
+        val = (
+            actual_data['id'],
+            actual_data['prdctCd'],
+            actual_data['prdctDesc'],
+            actual_data['prdctGrp'],
+            actual_data['prdctCtgry'],
+            actual_data['pricingCcy'],
+            actual_data['pricingType'],
+            actual_data['price'],
+            )
+        cursor.execute(sql, val)
+
+        sql = \
+            'INSERT INTO pricing_database.acct_prdt_pric_rel (acct_prdt_pric_rel_id,acct_id,prdt_id) VALUES (%s, %s,%s)'
+        val = (actual_data['id'], actual_data['globCustId'],
+               actual_data[''])
+        cursor.execute(sql, val)
+    cnxn.commit()
 
 
 if __name__ == '__main__':
