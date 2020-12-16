@@ -39,31 +39,41 @@ def create_tables_if_not_exists():
 
         # Create Table
 
-        cursor.execute('CREATE TABLE IF NOT EXISTS customer (cust_id nvarchar(50), glob_cust_id nvarchar(50), cust_name nvarchar(50))'
+        cursor.execute('CREATE TABLE IF NOT EXIST customer (cust_id int not null,glob_cust_id varchar2(50),cust_name varchar2(50),PRIMARY KEY (cust_id))'
                        )
 
         cursor = cnxn.cursor()
 
         # Create Table
 
-        cursor.execute('CREATE TABLE IF NOT EXISTS account (acct_id nvarchar(50), acct_num int(50), cust_id nvarchar(50))'
+        cursor.execute('CREATE TABLE IF NOT EXISTS account (acct_id int not null,acct_num varchar2(50),cust_id int,PRIMARY KEY (acct_id),FOREIGN KEY (cust_id) REFERENCES customer(cust_id))'
                        )
 
         cursor = cnxn.cursor()
 
         # Create Table
 
-        cursor.execute('CREATE TABLE IF NOT EXISTS product_pricing (prdt_id nvarchar(50), prdt_cd nvarchar(50), prdt_desc nvarchar	(50),prdt_group nvarchar(50),prdt_ctgry nvarchar(50),pricing_ccy nvarchar(50),price int(50))'
+        cursor.execute('CREATE TABLE IF NOT EXISTS product_pricing (prdt_id int not null,prdt_cd varchar2(50),prdt_desc varchar2(50),prdt_group varchar2(50),prdt_ctgry varchar2(50),pricing_ccy varchar2(50),pricing_typ varchar2(50),price DECIMAL(10,2),PRIMARY KEY (prdt_id))'
                        )
 
         cursor = cnxn.cursor()
 
         # Create Table
 
-        cursor.execute('CREATE TABLE IF NOT EXISTS cust_prdt_pric_rel (cust_prdt_pric_rel_id nvarchar(50), cust_id nvarchar(50),prdt_id nvarchar(50))'
+        cursor.execute('CREATE TABLE IF NOT EXISTS cust_prdt_pric_rel ( cust_prdt_pric_rel_id int not null,cust_id int,prdt_id int,FOREIGN KEY (cust_id) REFERENCES customer(cust_id),FOREIGN KEY (prdt_id) REFERENCES product_pricing(prdt_id))'
+                       )
+
+        # cnxn.close()
+
+        cursor = cnxn.cursor()
+
+        # Create Table
+
+        cursor.execute('CREATE TABLE IF NOT EXIST acct_prdt_pric_rel (acct_prdt_pric_rel_id int not null,acct_id int, prdt_id int,FOREIGN KEY (acct_id) REFERENCES account(acct_id),FOREIGN KEY (prdt_id) REFERENCES product_pricing(prdt_id))'
                        )
         cnxn.close()
     except:
+
         print '2 error while creating tables'
 
 
@@ -73,7 +83,7 @@ def process_csv():
 
     # then we execute with every row in our dataframe
 
-    data = pd.read_csv('people.csv')
+    data = pd.read_csv('gs://pricing-bucket-123/pricing.csv')
     df = pd.DataFrame(data, columns=['Name', 'Country', 'Age'])
 
     # Insert DataFrame to Table
